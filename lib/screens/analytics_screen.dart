@@ -50,10 +50,8 @@ class AnalyticsScreen extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: isDark
-                              // ignore: deprecated_member_use
-                              ? Colors.black.withOpacity(0.3)
-                              // ignore: deprecated_member_use
-                              : Colors.black.withOpacity(0.1),
+                              ? Colors.black.withAlpha((0.3 * 255).toInt())
+                              : Colors.black.withAlpha((0.1 * 255).toInt()),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -112,10 +110,8 @@ class AnalyticsScreen extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: isDark
-                              // ignore: deprecated_member_use
-                              ? Colors.black.withOpacity(0.3)
-                              // ignore: deprecated_member_use
-                              : Colors.black.withOpacity(0.1),
+                              ? Colors.black.withAlpha((0.3 * 255).toInt())
+                              : Colors.black.withAlpha((0.1 * 255).toInt()),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -130,7 +126,7 @@ class AnalyticsScreen extends StatelessWidget {
                           context,
                           'Ваша колекція збалансована',
                           isDark
-                              ? const Color(0xFF1A3C34) // темний зелений фон
+                              ? const Color(0xFF1A3C34)
                               : const Color(0xFFE8F5E8),
                           isDark
                               ? const Color(0xFF81C784)
@@ -182,7 +178,6 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
-  // Оновлений _buildTip — тепер приймає context і isDark
   Widget _buildTip(
     BuildContext context,
     String text,

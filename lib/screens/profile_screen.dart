@@ -57,7 +57,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  // === HEADER ===
                   Container(
                     width: MediaQuery.of(context).size.width,
                     height: 235,
@@ -65,8 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       gradient: LinearGradient(
                         colors: [
                           theme.primaryColor,
-                          // ignore: deprecated_member_use
-                          theme.primaryColor.withOpacity(0.8),
+                          theme.primaryColor.withAlpha((0.8 * 255).toInt()),
                         ],
                       ),
                     ),
@@ -77,13 +75,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           width: 100,
                           height: 100,
                           decoration: ShapeDecoration(
-                            // ignore: deprecated_member_use
-                            color: Colors.white.withOpacity(0.25),
+                            color: Colors.white.withAlpha((0.25 * 255).toInt()),
                             shape: RoundedRectangleBorder(
                               side: BorderSide(
                                 width: 4,
-                                // ignore: deprecated_member_use
-                                color: Colors.white.withOpacity(0.3),
+                                color: Colors.white.withAlpha(
+                                  (0.3 * 255).toInt(),
+                                ),
                               ),
                               borderRadius: BorderRadius.circular(48),
                             ),
@@ -128,7 +126,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   const SizedBox(height: 25),
 
-                  // === КАРТКИ ===
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: _buildStatsCard(theme, isDark),
@@ -176,7 +173,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return name.isNotEmpty ? name[0].toUpperCase() : 'К';
   }
 
-  // === КАРТКА СТАТИСТИКИ ===
   Widget _buildStatsCard(ThemeData theme, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(24),
@@ -186,10 +182,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         boxShadow: [
           BoxShadow(
             color: isDark
-                // ignore: deprecated_member_use
-                ? Colors.black.withOpacity(0.3)
-                // ignore: deprecated_member_use
-                : Colors.black.withOpacity(0.1),
+                ? Colors.black.withAlpha((0.3 * 255).toInt())
+                : Colors.black.withAlpha((0.1 * 255).toInt()),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -293,7 +287,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // === КАРТКА ПРО МЕНЕ ===
   Widget _buildAboutCard(ThemeData theme, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -303,10 +296,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         boxShadow: [
           BoxShadow(
             color: isDark
-                // ignore: deprecated_member_use
-                ? Colors.black.withOpacity(0.3)
-                // ignore: deprecated_member_use
-                : Colors.black.withOpacity(0.05),
+                ? Colors.black.withAlpha((0.3 * 255).toInt())
+                : Colors.black.withAlpha((0.05 * 255).toInt()),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -339,7 +330,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // === КНОПКА РЕДАГУВАННЯ ===
   Widget _buildEditProfileButton(ThemeData theme, bool isDark) {
     return GestureDetector(
       onTap: () {},
@@ -347,8 +337,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         height: 48,
         decoration: ShapeDecoration(
           gradient: LinearGradient(
-            // ignore: deprecated_member_use
-            colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.9)],
+            colors: [
+              theme.primaryColor,
+              theme.primaryColor.withAlpha((0.9 * 255).toInt()),
+            ],
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -369,7 +361,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // === КАРТКА НАЛАШТУВАНЬ ===
   Widget _buildSettingsCard(ThemeData theme, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -379,10 +370,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         boxShadow: [
           BoxShadow(
             color: isDark
-                // ignore: deprecated_member_use
-                ? Colors.black.withOpacity(0.3)
-                // ignore: deprecated_member_use
-                : Colors.black.withOpacity(0.05),
+                ? Colors.black.withAlpha((0.3 * 255).toInt())
+                : Colors.black.withAlpha((0.05 * 255).toInt()),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

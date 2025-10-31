@@ -19,8 +19,9 @@ class CustomSearchBar extends StatelessWidget {
         border: Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
-            color: isDark ? Colors.black.withOpacity(0.3) : Colors.black12,
+            color: isDark
+                ? Colors.black.withAlpha((0.3 * 255).toInt())
+                : Colors.black.withAlpha((0.1 * 255).toInt()),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

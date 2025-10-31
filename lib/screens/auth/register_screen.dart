@@ -68,8 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             end: Alignment.bottomRight,
             colors: [
               theme.scaffoldBackgroundColor,
-              // ignore: deprecated_member_use
-              theme.scaffoldBackgroundColor.withOpacity(0.8),
+              theme.scaffoldBackgroundColor.withAlpha((0.8 * 255).toInt()),
             ],
           ),
         ),

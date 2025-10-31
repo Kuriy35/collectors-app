@@ -48,7 +48,7 @@ class ThemeProvider extends ChangeNotifier {
   static final _darkTheme = ThemeData(
     brightness: Brightness.dark,
     primaryColor: const Color.fromARGB(255, 43, 92, 133),
-    scaffoldBackgroundColor: const Color.fromARGB(255, 44, 31, 49),
+    scaffoldBackgroundColor: const Color.fromARGB(255, 53, 50, 54),
     cardColor: const Color(0xFF1E1E1E),
     dividerColor: const Color(0xFF333333),
     textTheme: const TextTheme(

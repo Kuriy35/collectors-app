@@ -18,13 +18,14 @@ class CustomAppBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          // ignore: deprecated_member_use
-          colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.9)],
+          colors: [
+            theme.primaryColor,
+            theme.primaryColor.withAlpha((0.9 * 255).toInt()),
+          ],
         ),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withAlpha((0.2 * 255).toInt()),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

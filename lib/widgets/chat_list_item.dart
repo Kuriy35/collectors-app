@@ -60,8 +60,8 @@ class ChatListItem extends StatelessWidget {
                 Text(
                   lastMessage,
                   style: TextStyle(
-                    color: isDark ? Colors.white70 : const Color(0xFF666666),
                     fontSize: 14,
+                    color: isDark ? Colors.white70 : const Color(0xFF666666),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -83,7 +83,7 @@ class ChatListItem extends StatelessWidget {
                   margin: const EdgeInsets.only(top: 8),
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: theme.primaryColor, // використовуємо primary з теми
+                    color: theme.primaryColor,
                     shape: BoxShape.circle,
                   ),
                   child: Text(

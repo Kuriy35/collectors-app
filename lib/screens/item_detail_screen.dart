@@ -32,7 +32,6 @@ class ItemDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Головне зображення (іконка)
             Center(
               child: Container(
                 width: 160,
@@ -41,8 +40,7 @@ class ItemDetailScreen extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       item.iconBg,
-                      // ignore: deprecated_member_use
-                      item.iconBg.withOpacity(0.8),
+                      item.iconBg.withAlpha((0.8 * 255).toInt()),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -51,10 +49,8 @@ class ItemDetailScreen extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(
                       color: isDark
-                          // ignore: deprecated_member_use
-                          ? Colors.black.withOpacity(0.4)
-                          // ignore: deprecated_member_use
-                          : Colors.black.withOpacity(0.15),
+                          ? Colors.black.withAlpha((0.4 * 255).toInt())
+                          : Colors.black.withAlpha((0.15 * 255).toInt()),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -71,7 +67,6 @@ class ItemDetailScreen extends StatelessWidget {
 
             const SizedBox(height: 32),
 
-            // Назва
             Text(
               item.title,
               style: theme.textTheme.headlineMedium?.copyWith(
@@ -82,7 +77,6 @@ class ItemDetailScreen extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            // Ціна
             Text(
               item.price,
               style: TextStyle(
@@ -95,7 +89,6 @@ class ItemDetailScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // Бейдж стану
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
@@ -103,8 +96,7 @@ class ItemDetailScreen extends StatelessWidget {
                   theme,
                   item.condition,
                   isDark,
-                  // ignore: deprecated_member_use
-                ).withOpacity(0.15),
+                ).withAlpha((0.15 * 255).toInt()),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: _getConditionColor(theme, item.condition, isDark),
@@ -123,7 +115,6 @@ class ItemDetailScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // Категорія
             _buildInfoRow(
               context,
               icon: Icons.category,
@@ -133,7 +124,6 @@ class ItemDetailScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Опис (якщо є)
             if (item.description != null && item.description!.isNotEmpty) ...[
               Text(
                 'Опис',
@@ -163,7 +153,6 @@ class ItemDetailScreen extends StatelessWidget {
 
             const SizedBox(height: 32),
 
-            // Кнопка "Редагувати" (заглушка)
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -190,7 +179,6 @@ class ItemDetailScreen extends StatelessWidget {
     );
   }
 
-  // Рядок інформації
   Widget _buildInfoRow(
     BuildContext context, {
     required IconData icon,
@@ -224,7 +212,6 @@ class ItemDetailScreen extends StatelessWidget {
     );
   }
 
-  // Колір стану
   Color _getConditionColor(ThemeData theme, String condition, bool isDark) {
     switch (condition.toLowerCase()) {
       case 'новий':

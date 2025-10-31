@@ -147,8 +147,7 @@ class _ToastWidgetState extends State<_ToastWidget>
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    // ignore: deprecated_member_use
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withAlpha((0.3 * 255).toInt()),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),

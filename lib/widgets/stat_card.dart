@@ -24,8 +24,9 @@ class StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
-            color: isDark ? Colors.black.withOpacity(0.3) : Colors.black12,
+            color: isDark
+                ? Colors.black.withAlpha((0.3 * 255).toInt())
+                : Colors.black.withAlpha((0.1 * 255).toInt()),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -37,8 +38,7 @@ class StatCard extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              // ignore: deprecated_member_use
-              color: theme.highlightColor, // м'якший фон
+              color: theme.highlightColor,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: Colors.white70, size: 24),

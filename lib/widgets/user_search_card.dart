@@ -19,10 +19,17 @@ class UserSearchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFFF0F0F0))),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: isDark ? Colors.white12 : const Color(0xFFF0F0F0),
+          ),
+        ),
       ),
       child: Row(
         children: [
@@ -34,16 +41,17 @@ class UserSearchCard extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
+                    color: isDark ? Colors.white : const Color(0xFF333333),
                   ),
                 ),
                 Text(
                   bio,
-                  style: const TextStyle(
-                    color: Color(0xFF666666),
+                  style: TextStyle(
                     fontSize: 14,
+                    color: isDark ? Colors.white70 : const Color(0xFF666666),
                   ),
                 ),
               ],
@@ -52,9 +60,9 @@ class UserSearchCard extends StatelessWidget {
           ElevatedButton(
             onPressed: onTap,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2196F3),
+              backgroundColor: theme.primaryColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(24),
               ),
             ),
             child: const Text(

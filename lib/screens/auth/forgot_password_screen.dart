@@ -76,8 +76,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             end: Alignment.bottomRight,
             colors: [
               theme.scaffoldBackgroundColor,
-              // ignore: deprecated_member_use
-              theme.scaffoldBackgroundColor.withOpacity(0.8),
+              theme.scaffoldBackgroundColor.withAlpha((0.8 * 255).toInt()),
             ],
           ),
         ),
@@ -92,7 +91,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   children: [
                     const SizedBox(height: 60),
 
-                    // Логотип
                     Container(
                       width: 80,
                       height: 80,
@@ -103,8 +101,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            // ignore: deprecated_member_use
-                            color: const Color(0xFF2196F3).withOpacity(0.3),
+                            color: const Color(
+                              0xFF2196F3,
+                            ).withAlpha((0.3 * 255).toInt()),
                             blurRadius: 20,
                             offset: const Offset(0, 8),
                           ),
@@ -143,7 +142,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                     const SizedBox(height: 40),
 
-                    // Поле email
                     CustomTextField(
                       label: 'Email',
                       hintText: 'example@gmail.com',
@@ -164,7 +162,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                     const SizedBox(height: 32),
 
-                    // Кнопка
                     _isLoading
                         ? const CircularProgressIndicator()
                         : CustomAuthButton(
@@ -174,7 +171,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                     const SizedBox(height: 24),
 
-                    // Повернення
                     InkWell(
                       onTap: () => Navigator.pop(context),
                       child: const Text(

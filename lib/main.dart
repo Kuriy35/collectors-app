@@ -1,4 +1,3 @@
-// main.dart
 import 'package:collectors_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +16,7 @@ import 'services/analytics_service.dart';
 import 'services/crashlytics_service.dart';
 import 'screens/auth/forgot_password_screen.dart';
 import 'providers/collection_provider.dart';
-import 'providers/theme_provider.dart'; // НОВИЙ ІМПОРТ
+import 'providers/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

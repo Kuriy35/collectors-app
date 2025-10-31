@@ -14,7 +14,7 @@ class CollectionProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   CollectionProvider() {
-    loadItems(); // Автозавантаження при створенні
+    loadItems();
   }
 
   Future<void> loadItems() async {
@@ -25,18 +25,17 @@ class CollectionProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Імітація затримки мережі
       await Future.delayed(const Duration(milliseconds: 800));
 
       final savedItems = await LocalStorageService.loadItems();
       if (savedItems.isEmpty) {
-        // Якщо порожньо — додаємо hardcoded
         _items = _getHardcodedItems();
         await LocalStorageService.saveItems(_items);
       } else {
         _items = savedItems;
       }
-      throw _status = CollectionStatus.loaded;
+
+      _status = CollectionStatus.loaded;
     } catch (e) {
       _status = CollectionStatus.error;
       _errorMessage = 'Не вдалося завантажити колекцію';
@@ -46,19 +45,16 @@ class CollectionProvider extends ChangeNotifier {
     }
   }
 
-  // Pull to Refresh
   Future<void> refresh() async {
     await loadItems();
   }
 
-  // Додавання нового предмету
   Future<void> addItem(CollectionItem item) async {
     _items.add(item);
     await LocalStorageService.saveItems(_items);
     notifyListeners();
   }
 
-  // Hardcoded дані
   List<CollectionItem> _getHardcodedItems() {
     return [
       CollectionItem(

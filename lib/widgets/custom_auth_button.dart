@@ -18,8 +18,10 @@ class CustomAuthButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
-            // ignore: deprecated_member_use
-            colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.9)],
+            colors: [
+              theme.primaryColor,
+              theme.primaryColor.withAlpha((0.9 * 255).toInt()),
+            ],
           ),
         ),
         child: Center(

@@ -9,7 +9,7 @@ class CollectionItem extends StatelessWidget {
   final String category;
   final String condition;
   final String price;
-  final VoidCallback? onTap; // ✅ НОВИЙ параметр
+  final VoidCallback? onTap;
 
   const CollectionItem({
     super.key,
@@ -20,7 +20,7 @@ class CollectionItem extends StatelessWidget {
     required this.category,
     required this.condition,
     required this.price,
-    this.onTap, // ✅ Опціональний
+    this.onTap,
   });
 
   @override
@@ -35,7 +35,7 @@ class CollectionItem extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: onTap ?? () {}, // ✅ Використовуємо callback
+        onTap: onTap ?? () {},
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(

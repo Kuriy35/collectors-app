@@ -22,7 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final provider = context.watch<CollectionProvider>();
     final theme = Theme.of(context);
 
-    // Фільтрація
     final filteredItems = _selectedCategory == 'Всі'
         ? provider.items
         : provider.items.where((i) => i.category == _selectedCategory).toList();
@@ -40,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Expanded(
                   child: RefreshIndicator(
-                    onRefresh: provider.refresh, // Pull to Refresh
+                    onRefresh: provider.refresh,
                     color: theme.primaryColor,
                     child: ListView(
                       padding: const EdgeInsets.all(16),
@@ -53,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         _buildFiltersRow(theme),
                         const SizedBox(height: 24),
 
-                        // === СТАНИ ===
                         if (provider.status == CollectionStatus.loading) ...[
                           const Center(child: CircularProgressIndicator()),
                           const SizedBox(height: 16),
@@ -176,10 +174,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   boxShadow: [
                     BoxShadow(
                       color: isActive
-                          // ignore: deprecated_member_use
-                          ? theme.primaryColor.withOpacity(0.3)
-                          // ignore: deprecated_member_use
-                          : Colors.black.withOpacity(0.1),
+                          ? theme.primaryColor.withAlpha((0.3 * 255).toInt())
+                          : Colors.black.withAlpha((0.1 * 255).toInt()),
                       blurRadius: isActive ? 6 : 3,
                     ),
                   ],
@@ -207,13 +203,17 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 56,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          // ignore: deprecated_member_use
-          colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.8)],
+          colors: [
+            theme.primaryColor,
+            theme.primaryColor.withAlpha((0.8 * 255).toInt()),
+          ],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          // ignore: deprecated_member_use
-          BoxShadow(color: theme.primaryColor.withOpacity(0.4), blurRadius: 3),
+          BoxShadow(
+            color: theme.primaryColor.withAlpha((0.4 * 255).toInt()),
+            blurRadius: 3,
+          ),
         ],
       ),
       child: const Center(
