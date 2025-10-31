@@ -50,37 +50,37 @@ class _CustomTextFieldState extends State<CustomTextField> {
       setState(() => _errorText = null);
       return;
     }
-
     final value = widget.controller?.text ?? '';
     final error = widget.validator?.call(value);
-
     setState(() => _errorText = error);
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
           widget.label,
-          style: const TextStyle(
-            fontFamily: 'Roboto',
-            fontWeight: FontWeight.w600,
+          style: TextStyle(
+            fontFamily: 'Inter',
             fontSize: 16,
-            color: Color(0xFF333333),
+            color: isDark ? Colors.white : const Color(0xFF333333),
           ),
         ),
         const SizedBox(height: 8),
         Container(
           height: 48,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: (_errorText != null && _hasInteracted)
                   ? Colors.red
-                  : const Color(0xFFE0E0E0),
+                  : theme.dividerColor,
               width: 2,
             ),
           ),
@@ -92,7 +92,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 size: 16,
                 color: (_errorText != null && _hasInteracted)
                     ? Colors.red
-                    : const Color(0xFF757575),
+                    : (isDark ? Colors.white70 : const Color(0xFF757575)),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -101,18 +101,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   obscureText: widget.obscureText,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   onChanged: (_) => _onTextChanged(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 16,
-                    color: Colors.black87,
+                    color: isDark ? Colors.white : const Color(0xFF333333),
                   ),
                   decoration: InputDecoration(
                     hintText: widget.hintText,
-                    hintStyle: const TextStyle(
+                    hintStyle: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w400,
                       fontSize: 16,
-                      color: Color(0xFF757575),
+                      color: isDark ? Colors.white60 : const Color(0xFF999999),
                     ),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(vertical: 12),

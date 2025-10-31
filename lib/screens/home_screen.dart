@@ -1,86 +1,150 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/collection_item.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_search_bar.dart';
 import '../widgets/custom_bottom_nav.dart';
-import '../../services/crashlytics_service.dart';
+import '../providers/collection_provider.dart';
+import 'item_detail_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String _selectedCategory = 'Всі';
+
+  @override
   Widget build(BuildContext context) {
+    final provider = context.watch<CollectionProvider>();
+    final theme = Theme.of(context);
+
+    // Фільтрація
+    final filteredItems = _selectedCategory == 'Всі'
+        ? provider.items
+        : provider.items.where((i) => i.category == _selectedCategory).toList();
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Stack(
         children: [
-          Container(
-            color: const Color(0xFFF5F5F5),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  const CustomAppBar(
-                    title: 'Моя колекція',
-                    showBackButton: false,
-                  ),
-                  Expanded(
+          SafeArea(
+            child: Column(
+              children: [
+                const CustomAppBar(
+                  title: 'Моя колекція',
+                  showBackButton: false,
+                ),
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: provider.refresh, // Pull to Refresh
+                    color: theme.primaryColor,
                     child: ListView(
                       padding: const EdgeInsets.all(16),
                       children: [
                         const CustomSearchBar(
-                          hintText: 'Пошук предметів...',
-                          onChanged: print,
+                          hintText: 'Пошук...',
+                          onChanged: null,
                         ),
                         const SizedBox(height: 16),
-                        _buildFiltersRow(),
+                        _buildFiltersRow(theme),
                         const SizedBox(height: 24),
-                        CollectionItem(
-                          icon: '🪙',
-                          iconBg: const Color(0xFFFFF3CD),
-                          iconColor: const Color(0xFF856404),
-                          title: 'Монета 1 гривня 2015',
-                          category: 'Монети',
-                          condition: 'Відмінний стан',
-                          price: '150 ₴',
-                        ),
-                        const SizedBox(height: 12),
-                        CollectionItem(
-                          icon: '📮',
-                          iconBg: const Color(0xFFD1ECF1),
-                          iconColor: const Color(0xFF0C5460),
-                          title: 'Марка "Квіти України"',
-                          category: 'Марки',
-                          condition: 'Новий стан',
-                          price: '45 ₴',
-                        ),
-                        const SizedBox(height: 12),
-                        CollectionItem(
-                          icon: '🎮',
-                          iconBg: const Color(0xFFE2E3FF),
-                          iconColor: const Color(0xFF4C63D2),
-                          title: 'Фігурка Бетмена',
-                          category: 'Фігурки',
-                          condition: 'Добрий стан',
-                          price: '320 ₴',
-                        ),
+
+                        // === СТАНИ ===
+                        if (provider.status == CollectionStatus.loading) ...[
+                          const Center(child: CircularProgressIndicator()),
+                          const SizedBox(height: 16),
+                        ] else if (provider.status ==
+                            CollectionStatus.error) ...[
+                          Center(
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 48,
+                                  color: Colors.red.shade400,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  provider.errorMessage ?? 'Помилка',
+                                  style: TextStyle(color: Colors.red.shade400),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 12),
+                                ElevatedButton(
+                                  onPressed: provider.refresh,
+                                  child: const Text('Спробувати ще'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ] else if (filteredItems.isEmpty) ...[
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 40),
+                              child: Text(
+                                _selectedCategory == 'Всі'
+                                    ? 'Колекція порожня'
+                                    : 'Немає предметів у "$_selectedCategory"',
+                                style: TextStyle(
+                                  color: theme.textTheme.bodyMedium?.color,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ] else ...[
+                          ...filteredItems.map(
+                            (item) => Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: CollectionItem(
+                                icon: item.icon,
+                                iconBg: item.iconBg,
+                                iconColor: item.iconColor,
+                                title: item.title,
+                                category: item.category,
+                                condition: item.condition,
+                                price: item.price,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          ItemDetailScreen(item: item),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          // Positioned(bottom: 16, right: 16, child: _buildAddItemButton()),
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: GestureDetector(
+              onTap: () => Navigator.pushNamed(context, '/add-item'),
+              child: _buildAddItemButton(theme),
+            ),
+          ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => CrashlyticsService.throwTestCrash(),
-        backgroundColor: Colors.red,
-        child: Icon(Icons.bug_report),
       ),
       bottomNavigationBar: CustomBottomNav(
         activeTab: 'Колекція',
         onTabSelected: (tab) {
-          if (tab.contains("Профіль")) {
+          if (tab.contains("Чати")) {
+            Navigator.pushReplacementNamed(context, '/chats');
+          } else if (tab.contains("Аналітика")) {
+            Navigator.pushReplacementNamed(context, '/analytics');
+          } else if (tab.contains("Профіль")) {
             Navigator.pushReplacementNamed(context, '/profile');
           }
         },
@@ -88,64 +152,73 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFiltersRow() {
+  Widget _buildFiltersRow(ThemeData theme) {
+    final categories = ['Всі', 'Монети', 'Марки', 'Фігурки'];
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: [
-          _buildFilterItem('Всі', active: true),
-          const SizedBox(width: 8),
-          _buildFilterItem('🪙 Монети'),
-          const SizedBox(width: 8),
-          _buildFilterItem('📮 Марки'),
-          const SizedBox(width: 8),
-          _buildFilterItem('🎮 Фігурки'),
-        ],
+        children: categories.map((cat) {
+          final isActive = cat == _selectedCategory;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: GestureDetector(
+              onTap: () => setState(() => _selectedCategory = cat),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: isActive ? theme.primaryColor : theme.cardColor,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: theme.dividerColor),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isActive
+                          // ignore: deprecated_member_use
+                          ? theme.primaryColor.withOpacity(0.3)
+                          // ignore: deprecated_member_use
+                          : Colors.black.withOpacity(0.1),
+                      blurRadius: isActive ? 6 : 3,
+                    ),
+                  ],
+                ),
+                child: Text(
+                  cat,
+                  style: TextStyle(
+                    color: isActive
+                        ? Colors.white
+                        : theme.textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
 
-  Widget _buildFilterItem(String label, {bool active = false}) {
+  Widget _buildAddItemButton(ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      width: 56,
+      height: 56,
       decoration: BoxDecoration(
-        color: active ? const Color(0xFF2196F3) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
+        gradient: LinearGradient(
+          // ignore: deprecated_member_use
+          colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.8)],
+        ),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(
-            color: active ? const Color(0x4C2196F3) : Colors.black12,
-            blurRadius: 8,
-          ),
+          // ignore: deprecated_member_use
+          BoxShadow(color: theme.primaryColor.withOpacity(0.4), blurRadius: 3),
         ],
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: active ? Colors.white : const Color(0xFF666666),
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
+      child: const Center(
+        child: Text('+', style: TextStyle(fontSize: 24, color: Colors.white)),
       ),
     );
   }
-
-  // Widget _buildAddItemButton() {
-  //   return Container(
-  //     width: 56,
-  //     height: 56,
-  //     decoration: BoxDecoration(
-  //       gradient: const LinearGradient(
-  //         begin: Alignment.topLeft,
-  //         end: Alignment.bottomRight,
-  //         colors: [Color(0xFF2196F3), Color(0xFF1976D2)],
-  //       ),
-  //       borderRadius: BorderRadius.circular(16),
-  //       boxShadow: const [BoxShadow(color: Color(0x662196F3), blurRadius: 12)],
-  //     ),
-  //     child: const Center(
-  //       child: Text('+', style: TextStyle(fontSize: 24, color: Colors.white)),
-  //     ),
-  //   );
-  // }
 }

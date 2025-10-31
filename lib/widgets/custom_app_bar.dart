@@ -12,56 +12,48 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       height: 64,
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF2196F3), Color(0xFF1976D2)],
+          // ignore: deprecated_member_use
+          colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.9)],
         ),
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
+          BoxShadow(
+            // ignore: deprecated_member_use
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          showBackButton
-              ? Row(
-                  children: [
-                    InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: const Text(
-                        '←',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                  ],
-                )
-              : const SizedBox(width: 20),
+          if (showBackButton)
+            InkWell(
+              onTap: () => Navigator.pop(context),
+              child: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          if (showBackButton) const SizedBox(width: 16),
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                    color: Colors.white,
-                  ),
-                ),
-                const Text(
-                  '⋮',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-              ],
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w600,
+                fontSize: 20,
+                color: Colors.white,
+              ),
             ),
           ),
+          const Icon(Icons.more_vert, color: Colors.white),
         ],
       ),
     );

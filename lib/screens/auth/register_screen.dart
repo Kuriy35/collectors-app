@@ -55,15 +55,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFE3F2FD), Color(0xFFE8EAF6)],
+            colors: [
+              theme.scaffoldBackgroundColor,
+              // ignore: deprecated_member_use
+              theme.scaffoldBackgroundColor.withOpacity(0.8),
+            ],
           ),
         ),
         child: SafeArea(

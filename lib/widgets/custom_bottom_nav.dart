@@ -12,79 +12,55 @@ class CustomBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
-      height: 64,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE0E0E0))),
+      height: 68,
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        border: Border(top: BorderSide(color: theme.dividerColor)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12,
+            // ignore: deprecated_member_use
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
-            offset: Offset(0, -2),
+            offset: const Offset(0, -2),
           ),
         ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem(
-            label: 'Колекція',
-            icon: Icons.archive,
-            isActive: activeTab == 'Колекція',
-            onTap: () => onTabSelected?.call('Колекція'),
-          ),
-          _buildNavItem(
-            label: 'Чати',
-            icon: Icons.message,
-            isActive: activeTab == 'Чати',
-            onTap: () => onTabSelected?.call('Чати'),
-          ),
-          _buildNavItem(
-            label: 'Аналітика',
-            icon: Icons.trending_up,
-            isActive: activeTab == 'Аналітика',
-            onTap: () => onTabSelected?.call('Аналітика'),
-          ),
-          _buildNavItem(
-            label: 'Профіль',
-            icon: Icons.person,
-            isActive: activeTab == 'Профіль',
-            onTap: () => onTabSelected?.call('Профіль'),
-          ),
+          _buildNavItem('Колекція', Icons.archive, theme),
+          _buildNavItem('Чати', Icons.message, theme),
+          _buildNavItem('Аналітика', Icons.trending_up, theme),
+          _buildNavItem('Профіль', Icons.person, theme),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem({
-    required String label,
-    required IconData icon,
-    required bool isActive,
-    VoidCallback? onTap,
-  }) {
+  Widget _buildNavItem(String label, IconData icon, ThemeData theme) {
+    final isActive = activeTab == label;
+    final color = isActive
+        ? theme.primaryColor
+        : (theme.brightness == Brightness.dark
+              ? Colors.white70
+              : const Color(0xFF757575));
+
     return Expanded(
-      // ← ВАЖЛИВО!
       child: GestureDetector(
-        onTap: onTap,
+        onTap: () => onTabSelected?.call(label),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 24,
-              color: isActive
-                  ? const Color(0xFF2196F3)
-                  : const Color(0xFF757575),
-            ),
+            Icon(icon, size: 24, color: color),
             Text(
               label,
               style: TextStyle(
                 fontSize: 12,
+                color: color,
                 fontWeight: FontWeight.w500,
-                color: isActive
-                    ? const Color(0xFF2196F3)
-                    : const Color(0xFF757575),
               ),
             ),
           ],

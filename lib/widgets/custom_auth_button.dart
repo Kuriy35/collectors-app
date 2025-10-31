@@ -8,6 +8,8 @@ class CustomAuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -15,10 +17,9 @@ class CustomAuthButton extends StatelessWidget {
         height: 48,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF2196F3), Color(0xFF1976D2)],
+          gradient: LinearGradient(
+            // ignore: deprecated_member_use
+            colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.9)],
           ),
         ),
         child: Center(
