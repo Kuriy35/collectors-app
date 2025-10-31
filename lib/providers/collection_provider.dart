@@ -5,11 +5,11 @@ import '../services/local_storage_service.dart';
 enum CollectionStatus { initial, loading, loaded, error }
 
 class CollectionProvider extends ChangeNotifier {
-  List<CollectionItem> _items = [];
+  List<CollectionItemData> _items = [];
   CollectionStatus _status = CollectionStatus.initial;
   String? _errorMessage;
 
-  List<CollectionItem> get items => _items;
+  List<CollectionItemData> get items => _items;
   CollectionStatus get status => _status;
   String? get errorMessage => _errorMessage;
 
@@ -49,15 +49,15 @@ class CollectionProvider extends ChangeNotifier {
     await loadItems();
   }
 
-  Future<void> addItem(CollectionItem item) async {
+  Future<void> addItem(CollectionItemData item) async {
     _items.add(item);
     await LocalStorageService.saveItems(_items);
     notifyListeners();
   }
 
-  List<CollectionItem> _getHardcodedItems() {
+  List<CollectionItemData> _getHardcodedItems() {
     return [
-      CollectionItem(
+      CollectionItemData(
         id: '1',
         icon: 'C',
         iconBg: Colors.purple.shade100,
@@ -68,7 +68,7 @@ class CollectionProvider extends ChangeNotifier {
         price: '₴450',
         description: 'Старовинна монета з Риму, 2 ст. н.е.',
       ),
-      CollectionItem(
+      CollectionItemData(
         id: '2',
         icon: 'S',
         iconBg: Colors.green.shade100,
@@ -79,7 +79,7 @@ class CollectionProvider extends ChangeNotifier {
         price: '₴120',
         description: 'Рідкісна поштова марка 1992 року.',
       ),
-      CollectionItem(
+      CollectionItemData(
         id: '3',
         icon: 'F',
         iconBg: Colors.orange.shade100,

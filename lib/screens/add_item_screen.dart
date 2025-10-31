@@ -56,7 +56,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   void _submit() {
     if (_isFormValid) {
-      final item = CollectionItem(
+      final item = CollectionItemData(
         id: DateTime.now().toString(),
         icon: _getIcon(_category),
         iconBg: _getBgColor(_category),

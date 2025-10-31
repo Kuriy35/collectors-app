@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/collection_item.dart';
 
 class ItemDetailScreen extends StatelessWidget {
-  final CollectionItem item;
+  final CollectionItemData item;
 
   const ItemDetailScreen({super.key, required this.item});
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CollectionItem {
+class CollectionItemData {
   final String id;
   final String icon;
   final Color iconBg;
@@ -11,7 +11,7 @@ class CollectionItem {
   final String price;
   final String? description;
 
-  CollectionItem({
+  CollectionItemData({
     required this.id,
     required this.icon,
     required this.iconBg,
@@ -35,15 +35,16 @@ class CollectionItem {
     'description': description,
   };
 
-  factory CollectionItem.fromJson(Map<String, dynamic> json) => CollectionItem(
-    id: json['id'],
-    icon: json['icon'],
-    iconBg: Color(json['iconBg']),
-    iconColor: Color(json['iconColor']),
-    title: json['title'],
-    category: json['category'],
-    condition: json['condition'],
-    price: json['price'],
-    description: json['description'],
-  );
+  factory CollectionItemData.fromJson(Map<String, dynamic> json) =>
+      CollectionItemData(
+        id: json['id'],
+        icon: json['icon'],
+        iconBg: Color(json['iconBg']),
+        iconColor: Color(json['iconColor']),
+        title: json['title'],
+        category: json['category'],
+        condition: json['condition'],
+        price: json['price'],
+        description: json['description'],
+      );
 }
