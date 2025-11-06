@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/collection_item.dart';
+import '../models/collection_item_data.dart';
 import '../services/local_storage_service.dart';
 
 enum CollectionStatus { initial, loading, loaded, error }

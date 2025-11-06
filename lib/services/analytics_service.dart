@@ -6,13 +6,6 @@ class AnalyticsService {
     analytics: _analytics,
   );
 
-  static Future<void> logScreenView(String screenName) async {
-    await _analytics.logScreenView(
-      screenName: screenName,
-      screenClass: screenName,
-    );
-  }
-
   static Future<void> logLogin(String method) async {
     await _analytics.logLogin(loginMethod: method);
   }
@@ -22,7 +15,7 @@ class AnalyticsService {
   }
 
   static Future<void> logPasswordReset() async {
-    await FirebaseAnalytics.instance.logEvent(
+    await _analytics.logEvent(
       name: 'password_reset_requested',
       parameters: {'screen': 'forgot_password'},
     );

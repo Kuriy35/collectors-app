@@ -25,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.logScreenView('login_screen');
   }
 
   Future<void> _handleLogin() async {

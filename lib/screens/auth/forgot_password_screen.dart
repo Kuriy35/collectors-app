@@ -28,7 +28,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.logScreenView('forgot_password');
   }
 
   Future<void> _sendReset() async {

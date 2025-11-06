@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/collection_item.dart';
+import '../models/collection_item_data.dart';
 
 class LocalStorageService {
   static const String _key = 'collection_items';

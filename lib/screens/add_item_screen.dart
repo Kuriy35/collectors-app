@@ -5,7 +5,7 @@ import '../widgets/custom_bottom_nav.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/custom_dropdown.dart';
 import '../providers/collection_provider.dart';
-import '../models/collection_item.dart';
+import '../models/collection_item_data.dart';
 
 class AddItemScreen extends StatefulWidget {
   const AddItemScreen({super.key});

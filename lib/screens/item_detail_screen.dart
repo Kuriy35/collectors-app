@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/collection_item.dart';
+import '../models/collection_item_data.dart';
 
 class ItemDetailScreen extends StatelessWidget {
   final CollectionItemData item;
