@@ -1,27 +1,20 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+
+import '../models/collection_item.dart';
 import 'custom_badge.dart';
 
-class CollectionItem extends StatelessWidget {
-  final String icon;
-  final Color iconBg;
-  final Color iconColor;
-  final String title;
-  final String category;
-  final String condition;
-  final String price;
-  final VoidCallback? onTap;
-
-  const CollectionItem({
+class CollectionItemCard extends StatelessWidget {
+  const CollectionItemCard({
     super.key,
-    required this.icon,
-    required this.iconBg,
-    required this.iconColor,
-    required this.title,
-    required this.category,
-    required this.condition,
-    required this.price,
+    required this.item,
     this.onTap,
+    this.onOwnerTap,
   });
+
+  final CollectionItem item;
+  final VoidCallback? onTap;
+  final VoidCallback? onOwnerTap;
 
   @override
   Widget build(BuildContext context) {
@@ -35,24 +28,15 @@ class CollectionItem extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: onTap ?? () {},
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: iconBg,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Center(
-                  child: Text(
-                    icon,
-                    style: TextStyle(fontSize: 32, color: iconColor),
-                  ),
-                ),
+              _ItemThumbnail(
+                imageUrl: item.imageUrls.isNotEmpty
+                    ? item.imageUrls.first
+                    : null,
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -61,7 +45,7 @@ class CollectionItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      title,
+                      item.title,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -73,14 +57,16 @@ class CollectionItem extends StatelessWidget {
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        CustomBadge(text: category),
+                        CustomBadge(text: item.category),
                         const SizedBox(width: 8),
-                        CustomBadge(text: condition),
+                        CustomBadge(text: item.condition),
                       ],
                     ),
+                    const SizedBox(height: 6),
+                    _buildOwnerRow(context, theme, item),
                     const SizedBox(height: 8),
                     Text(
-                      price,
+                      _formatPrice(item.price),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -93,6 +79,97 @@ class CollectionItem extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  String _formatPrice(double price) {
+    if (price % 1 == 0) {
+      return '₴${price.toStringAsFixed(0)}';
+    }
+    return '₴${price.toStringAsFixed(2)}';
+  }
+
+  Widget _buildOwnerRow(BuildContext context, ThemeData theme, CollectionItem item) {
+    return GestureDetector(
+      onTap: onOwnerTap,
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 12,
+            backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
+            backgroundImage: item.ownerId.isNotEmpty
+                ? null
+                : null, // We'll fetch owner photo from profile in OtherUserProfileScreen
+            child: item.ownerId.isNotEmpty
+                ? Text(
+                    item.ownerName.isNotEmpty ? item.ownerName[0].toUpperCase() : '?',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: theme.primaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                : null,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              item.ownerName,
+              style: TextStyle(
+                fontSize: 13,
+                color: theme.textTheme.bodySmall?.color?.withValues(
+                  alpha: 0.8,
+                ),
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Icon(
+            Icons.arrow_forward_ios,
+            size: 12,
+            color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.5),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ItemThumbnail extends StatelessWidget {
+  const _ItemThumbnail({this.imageUrl});
+
+  final String? imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: 64,
+      height: 64,
+      decoration: BoxDecoration(
+        color: theme.primaryColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: imageUrl == null
+            ? Icon(Icons.camera_alt_outlined, color: theme.primaryColor)
+            : CachedNetworkImage(
+                imageUrl: imageUrl!,
+                fit: BoxFit.cover,
+                placeholder: (_, __) => const Center(
+                  child: SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+                errorWidget: (_, __, ___) => Icon(
+                  Icons.broken_image_outlined,
+                  color: theme.colorScheme.error,
+                ),
+              ),
       ),
     );
   }

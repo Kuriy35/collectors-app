@@ -7,6 +7,7 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
   final bool obscureText;
   final FormFieldValidator<String>? validator;
+  final TextInputType? keyboardType;
 
   const CustomTextField({
     super.key,
@@ -16,6 +17,7 @@ class CustomTextField extends StatefulWidget {
     this.controller,
     this.obscureText = false,
     this.validator,
+    this.keyboardType,
   });
 
   @override
@@ -99,6 +101,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 child: TextFormField(
                   controller: widget.controller,
                   obscureText: widget.obscureText,
+                  keyboardType: widget.keyboardType,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   onChanged: (_) => _onTextChanged(),
                   style: TextStyle(

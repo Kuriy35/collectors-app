@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../widgets/collection_item.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_search_bar.dart';
 import '../widgets/custom_bottom_nav.dart';
 import '../providers/collection_provider.dart';
-import 'item_detail_screen.dart';
+import 'my_collection_tab.dart';
+import 'other_collections_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,17 +13,25 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  String _selectedCategory = 'Всі';
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<CollectionProvider>();
     final theme = Theme.of(context);
-
-    final filteredItems = _selectedCategory == 'Всі'
-        ? provider.items
-        : provider.items.where((i) => i.category == _selectedCategory).toList();
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -33,93 +40,24 @@ class _HomeScreenState extends State<HomeScreen> {
           SafeArea(
             child: Column(
               children: [
-                const CustomAppBar(
-                  title: 'Моя колекція',
-                  showBackButton: false,
+                const CustomAppBar(title: 'Колекція', showBackButton: false),
+                TabBar(
+                  controller: _tabController,
+                  labelColor: theme.primaryColor,
+                  unselectedLabelColor: theme.textTheme.bodyMedium?.color,
+                  indicatorColor: theme.primaryColor,
+                  tabs: const [
+                    Tab(text: 'Моя колекція'),
+                    Tab(text: 'Інші колекції'),
+                  ],
                 ),
                 Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: provider.refresh,
-                    color: theme.primaryColor,
-                    child: ListView(
-                      padding: const EdgeInsets.all(16),
-                      children: [
-                        const CustomSearchBar(
-                          hintText: 'Пошук...',
-                          onChanged: null,
-                        ),
-                        const SizedBox(height: 16),
-                        _buildFiltersRow(theme),
-                        const SizedBox(height: 24),
-
-                        if (provider.status == CollectionStatus.loading) ...[
-                          const Center(child: CircularProgressIndicator()),
-                          const SizedBox(height: 16),
-                        ] else if (provider.status ==
-                            CollectionStatus.error) ...[
-                          Center(
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.error_outline,
-                                  size: 48,
-                                  color: Colors.red.shade400,
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  provider.errorMessage ?? 'Помилка',
-                                  style: TextStyle(color: Colors.red.shade400),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 12),
-                                ElevatedButton(
-                                  onPressed: provider.refresh,
-                                  child: const Text('Спробувати ще'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ] else if (filteredItems.isEmpty) ...[
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 40),
-                              child: Text(
-                                _selectedCategory == 'Всі'
-                                    ? 'Колекція порожня'
-                                    : 'Немає предметів у "$_selectedCategory"',
-                                style: TextStyle(
-                                  color: theme.textTheme.bodyMedium?.color,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ] else ...[
-                          ...filteredItems.map(
-                            (item) => Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: CollectionItem(
-                                icon: item.icon,
-                                iconBg: item.iconBg,
-                                iconColor: item.iconColor,
-                                title: item.title,
-                                category: item.category,
-                                condition: item.condition,
-                                price: item.price,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          ItemDetailScreen(item: item),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      const MyCollectionTab(),
+                      const OtherCollectionsTab(),
+                    ],
                   ),
                 ),
               ],
@@ -146,53 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
             Navigator.pushReplacementNamed(context, '/profile');
           }
         },
-      ),
-    );
-  }
-
-  Widget _buildFiltersRow(ThemeData theme) {
-    final categories = ['Всі', 'Монети', 'Марки', 'Фігурки'];
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: categories.map((cat) {
-          final isActive = cat == _selectedCategory;
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: GestureDetector(
-              onTap: () => setState(() => _selectedCategory = cat),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: isActive ? theme.primaryColor : theme.cardColor,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: theme.dividerColor),
-                  boxShadow: [
-                    BoxShadow(
-                      color: isActive
-                          ? theme.primaryColor.withAlpha((0.3 * 255).toInt())
-                          : Colors.black.withAlpha((0.1 * 255).toInt()),
-                      blurRadius: isActive ? 6 : 3,
-                    ),
-                  ],
-                ),
-                child: Text(
-                  cat,
-                  style: TextStyle(
-                    color: isActive
-                        ? Colors.white
-                        : theme.textTheme.bodyLarge?.color,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
       ),
     );
   }

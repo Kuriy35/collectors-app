@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/collection_provider.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_bottom_nav.dart';
 import '../widgets/stat_card.dart';
@@ -11,6 +13,25 @@ class AnalyticsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final provider = context.watch<CollectionProvider>();
+    final myItems = provider.myItems;
+
+    // Calculate stats
+    final totalItems = myItems.length;
+    final totalValue = provider.myItemsTotalValue;
+
+    // Calculate category breakdown
+    final categoryCounts = <String, int>{};
+    for (final item in myItems) {
+      categoryCounts[item.category] = (categoryCounts[item.category] ?? 0) + 1;
+    }
+
+    // Sort categories by count descending
+    final sortedCategories = categoryCounts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    // Take top 3 or all if less than 3
+    final topCategories = sortedCategories.take(3).toList();
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -22,24 +43,27 @@ class AnalyticsScreen extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: StatCard(
-                          title: 'Предметів у власності',
-                          value: '47',
-                          icon: Icons.inventory_2,
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: StatCard(
+                            title: 'Предметів у власності',
+                            value: '$totalItems',
+                            icon: Icons.inventory_2,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: StatCard(
-                          title: 'Загальна вартість',
-                          value: '₴2,340',
-                          icon: Icons.paid,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: StatCard(
+                            title: 'Загальна вартість',
+                            value: '₴${totalValue.toStringAsFixed(0)}',
+                            icon: Icons.paid,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 24),
                   Container(
@@ -65,39 +89,56 @@ class AnalyticsScreen extends StatelessWidget {
                           style: theme.textTheme.titleLarge,
                         ),
                         const SizedBox(height: 16),
-                        Container(
-                          height: 160,
-                          decoration: BoxDecoration(
-                            color: theme.scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Інтерактивна діаграма',
-                              style: TextStyle(
-                                color: theme.textTheme.bodyMedium?.color,
+                        if (totalItems == 0)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                              child: Text(
+                                'Немає даних для відображення',
+                                style: TextStyle(
+                                  color: theme.textTheme.bodyMedium?.color,
+                                ),
+                              ),
+                            ),
+                          )
+                        else ...[
+                          // Simple visual representation instead of interactive chart for now
+                          // as we don't have a chart library installed/configured in the snippet
+                          Container(
+                            height: 20,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: theme.scaffoldBackgroundColor,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Row(
+                                children: topCategories.map((entry) {
+                                  final index = topCategories.indexOf(entry);
+                                  final color = _getCategoryColor(index);
+                                  final flex = (entry.value / totalItems * 100).round();
+                                  return Expanded(
+                                    flex: flex,
+                                    child: Container(color: color),
+                                  );
+                                }).toList(),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        CategoryProgress(
-                          label: 'Монети',
-                          percent: 0.60,
-                          color: const Color(0xFF2196F3),
-                        ),
-                        const SizedBox(height: 16),
-                        CategoryProgress(
-                          label: 'Марки',
-                          percent: 0.25,
-                          color: const Color(0xFF4CAF50),
-                        ),
-                        const SizedBox(height: 16),
-                        CategoryProgress(
-                          label: 'Фігурки',
-                          percent: 0.15,
-                          color: const Color(0xFFFF9800),
-                        ),
+                          const SizedBox(height: 20),
+                          ...topCategories.map((entry) {
+                            final index = topCategories.indexOf(entry);
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: CategoryProgress(
+                                label: entry.key,
+                                percent: entry.value / totalItems,
+                                color: _getCategoryColor(index),
+                              ),
+                            );
+                          }),
+                        ],
                       ],
                     ),
                   ),
@@ -124,7 +165,9 @@ class AnalyticsScreen extends StatelessWidget {
                         const SizedBox(height: 16),
                         _buildTip(
                           context,
-                          'Ваша колекція збалансована',
+                          totalItems > 0
+                              ? 'Ваша колекція росте!'
+                              : 'Почніть додавати предмети!',
                           isDark
                               ? const Color(0xFF1A3C34)
                               : const Color(0xFFE8F5E8),
@@ -135,18 +178,7 @@ class AnalyticsScreen extends StatelessWidget {
                         const SizedBox(height: 12),
                         _buildTip(
                           context,
-                          'Додайте більше марок',
-                          isDark
-                              ? const Color(0xFF1A2A44)
-                              : const Color(0xFFE3F2FD),
-                          isDark
-                              ? const Color(0xFF64B5F6)
-                              : const Color(0xFF2196F3),
-                        ),
-                        const SizedBox(height: 12),
-                        _buildTip(
-                          context,
-                          'Середня вартість: ₴50',
+                          'Середня вартість: ₴${totalItems > 0 ? (totalValue / totalItems).toStringAsFixed(0) : "0"}',
                           isDark
                               ? const Color(0xFF3D2F1A)
                               : const Color(0xFFFFF3CD),
@@ -176,6 +208,17 @@ class AnalyticsScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Color _getCategoryColor(int index) {
+    const colors = [
+      Color(0xFF2196F3), // Blue
+      Color(0xFF4CAF50), // Green
+      Color(0xFFFF9800), // Orange
+      Color(0xFF9C27B0), // Purple
+      Color(0xFFE91E63), // Pink
+    ];
+    return colors[index % colors.length];
   }
 
   Widget _buildTip(

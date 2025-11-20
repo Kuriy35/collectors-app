@@ -17,6 +17,7 @@ import 'services/crashlytics_service.dart';
 import 'screens/auth/forgot_password_screen.dart';
 import 'providers/collection_provider.dart';
 import 'providers/theme_provider.dart';
+import 'repositories/collection_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +35,11 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => CollectionProvider()),
+        Provider(create: (_) => CollectionRepository()),
+        ChangeNotifierProvider(
+          create: (context) =>
+              CollectionProvider(context.read<CollectionRepository>()),
+        ),
       ],
       child: const CollectorsApp(),
     );

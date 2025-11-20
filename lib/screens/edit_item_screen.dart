@@ -1,9 +1,11 @@
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../models/collection_item.dart';
 import '../providers/collection_provider.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_bottom_nav.dart';
@@ -11,11 +13,13 @@ import '../widgets/custom_dropdown.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/custom_toast.dart';
 
-class AddItemScreen extends StatefulWidget {
-  const AddItemScreen({super.key});
+class EditItemScreen extends StatefulWidget {
+  final CollectionItem item;
+
+  const EditItemScreen({super.key, required this.item});
 
   @override
-  State<AddItemScreen> createState() => _AddItemScreenState();
+  State<EditItemScreen> createState() => _EditItemScreenState();
 }
 
 class _SelectedImage {
@@ -25,25 +29,45 @@ class _SelectedImage {
   final Uint8List bytes;
 }
 
-class _AddItemScreenState extends State<AddItemScreen> {
-  final _titleCtrl = TextEditingController();
-  final _priceCtrl = TextEditingController();
-  final _descCtrl = TextEditingController();
+class _ExistingImage {
+  _ExistingImage({required this.url});
+
+  final String url;
+}
+
+class _EditItemScreenState extends State<EditItemScreen> {
+  late final TextEditingController _titleCtrl;
+  late final TextEditingController _priceCtrl;
+  late final TextEditingController _descCtrl;
   final _picker = ImagePicker();
 
-  String _category = 'Монети';
-  String _condition = 'Відмінний стан';
-  bool _isPublic = true;
+  late String _category;
+  late String _condition;
+  late bool _isPublic;
   bool _isFormValid = false;
   bool _isSubmitting = false;
 
-  List<_SelectedImage> _images = [];
+  List<_ExistingImage> _existingImages = [];
+  List<_SelectedImage> _newImages = [];
+  final List<String> _removedImageUrls = [];
 
   @override
   void initState() {
     super.initState();
+    _titleCtrl = TextEditingController(text: widget.item.title);
+    _priceCtrl = TextEditingController(text: widget.item.price.toString());
+    _descCtrl = TextEditingController(text: widget.item.description ?? '');
+    _category = widget.item.category;
+    _condition = widget.item.condition;
+    _isPublic = widget.item.isPublic;
+
+    _existingImages = widget.item.imageUrls
+        .map((url) => _ExistingImage(url: url))
+        .toList();
+
     _titleCtrl.addListener(_checkFormValidity);
     _priceCtrl.addListener(_checkFormValidity);
+    _checkFormValidity();
   }
 
   @override
@@ -74,8 +98,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
       final bytes = await Future.wait(files.map((f) => f.readAsBytes()));
       setState(() {
-        _images = [
-          ..._images,
+        _newImages = [
+          ..._newImages,
           for (var i = 0; i < files.length; i++)
             _SelectedImage(file: files[i], bytes: bytes[i]),
         ];
@@ -84,6 +108,19 @@ class _AddItemScreenState extends State<AddItemScreen> {
       if (!mounted) return;
       CustomToast.showError(context, 'Не вдалося вибрати фото: $e');
     }
+  }
+
+  void _removeExistingImage(_ExistingImage image) {
+    setState(() {
+      _existingImages.remove(image);
+      _removedImageUrls.add(image.url);
+    });
+  }
+
+  void _removeNewImage(_SelectedImage image) {
+    setState(() {
+      _newImages.remove(image);
+    });
   }
 
   Future<void> _submit() async {
@@ -97,7 +134,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
     setState(() => _isSubmitting = true);
     try {
-      await context.read<CollectionProvider>().addItem(
+      final preservedUrls = _existingImages.map((img) => img.url).toList();
+      final newImageFiles = _newImages.map((img) => img.file).toList();
+
+      await context.read<CollectionProvider>().updateItem(
+        itemId: widget.item.id,
         title: _titleCtrl.text.trim(),
         category: _category,
         condition: _condition,
@@ -105,11 +146,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
         description: _descCtrl.text.trim().isEmpty
             ? null
             : _descCtrl.text.trim(),
-        images: _images.map((img) => img.file).toList(),
         isPublic: _isPublic,
+        newImages: newImageFiles.isEmpty ? null : newImageFiles,
+        preservedUrls: preservedUrls,
+        removedImageUrls: _removedImageUrls.isEmpty ? null : _removedImageUrls,
       );
       if (!mounted) return;
-      CustomToast.showSuccess(context, 'Предмет додано');
+      CustomToast.showSuccess(context, 'Змінено успішно');
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
@@ -130,7 +173,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const CustomAppBar(title: 'Додати предмет', showBackButton: true),
+            const CustomAppBar(
+              title: 'Редагувати предмет',
+              showBackButton: true,
+            ),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.all(16),
@@ -181,7 +227,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Опис (необов’язково)',
+                        'Опис (необов\'язково)',
                         style: theme.textTheme.titleMedium,
                       ),
                       const SizedBox(height: 8),
@@ -257,20 +303,52 @@ class _AddItemScreenState extends State<AddItemScreen> {
           spacing: 12,
           runSpacing: 12,
           children: [
-            GestureDetector(
-              onTap: _pickImages,
-              child: Container(
-                width: 96,
-                height: 96,
-                decoration: BoxDecoration(
-                  color: theme.cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: theme.dividerColor),
-                ),
-                child: const Icon(Icons.add_a_photo_outlined),
+            // Existing images from URLs
+            ..._existingImages.map(
+              (img) => Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 96,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: theme.dividerColor),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: CachedNetworkImage(
+                        imageUrl: img.url,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        errorWidget: (_, __, ___) =>
+                            const Icon(Icons.broken_image),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: -6,
+                    right: -6,
+                    child: GestureDetector(
+                      onTap: () => _removeExistingImage(img),
+                      child: CircleAvatar(
+                        radius: 12,
+                        backgroundColor: Colors.black.withValues(alpha: 0.6),
+                        child: const Icon(
+                          Icons.close,
+                          size: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            ..._images.map(
+            // New images from files
+            ..._newImages.map(
               (img) => Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -289,11 +367,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     top: -6,
                     right: -6,
                     child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _images = List.from(_images)..remove(img);
-                        });
-                      },
+                      onTap: () => _removeNewImage(img),
                       child: CircleAvatar(
                         radius: 12,
                         backgroundColor: Colors.black.withValues(alpha: 0.6),
@@ -306,6 +380,20 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     ),
                   ),
                 ],
+              ),
+            ),
+            // Add button
+            GestureDetector(
+              onTap: _pickImages,
+              child: Container(
+                width: 96,
+                height: 96,
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: theme.dividerColor),
+                ),
+                child: const Icon(Icons.add_a_photo_outlined),
               ),
             ),
           ],
@@ -340,7 +428,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 ),
               )
             : const Text(
-                'Додати предмет',
+                'Зберегти зміни',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
       ),
