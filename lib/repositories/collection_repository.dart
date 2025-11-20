@@ -333,4 +333,43 @@ class CollectionRepository {
     final profile = UserProfile.fromFirestore(snapshot);
     return profile.copyWith(totalItems: totalItems, totalValue: totalValue);
   }
+
+  Future<List<UserProfile>> searchUsers(String query) async {
+    final user = currentUser;
+    if (user == null || query.trim().isEmpty) {
+      return [];
+    }
+
+    final searchTerm = query.trim();
+    final endTerm = '$searchTerm\uf8ff';
+
+    // Query by displayName
+    final nameQuery = _firestore
+        .collection('users')
+        .where('displayName', isGreaterThanOrEqualTo: searchTerm)
+        .where('displayName', isLessThanOrEqualTo: endTerm)
+        .get();
+
+    // Query by collectionType
+    final typeQuery = _firestore
+        .collection('users')
+        .where('collectionType', isGreaterThanOrEqualTo: searchTerm)
+        .where('collectionType', isLessThanOrEqualTo: endTerm)
+        .get();
+
+    final results = await Future.wait([nameQuery, typeQuery]);
+    final nameDocs = results[0].docs;
+    final typeDocs = results[1].docs;
+
+    final Map<String, UserProfile> uniqueUsers = {};
+
+    for (final doc in [...nameDocs, ...typeDocs]) {
+      if (doc.id == user.uid) continue; // Exclude current user
+      if (!uniqueUsers.containsKey(doc.id)) {
+        uniqueUsers[doc.id] = UserProfile.fromFirestore(doc);
+      }
+    }
+
+    return uniqueUsers.values.toList();
+  }
 }

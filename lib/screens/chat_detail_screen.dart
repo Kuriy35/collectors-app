@@ -4,6 +4,9 @@ import '../widgets/custom_bottom_nav.dart';
 import '../widgets/message_bubble.dart';
 
 class ChatDetailScreen extends StatelessWidget {
+  final String? userName;
+  final String? userImage;
+
   final List<Map<String, dynamic>> messages = [
     {
       'text': 'Привіт! Бачила твою колекцію монет',
@@ -22,7 +25,11 @@ class ChatDetailScreen extends StatelessWidget {
     },
   ];
 
-  ChatDetailScreen({super.key});
+  ChatDetailScreen({
+    super.key,
+    this.userName,
+    this.userImage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +40,10 @@ class ChatDetailScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const CustomAppBar(title: 'Анна Мельник', showBackButton: true),
+            CustomAppBar(
+              title: userName ?? 'Анна Мельник',
+              showBackButton: true,
+            ),
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 16),

@@ -186,13 +186,12 @@ class _MyCollectionTabState extends State<MyCollectionTab> {
                   () => _showPriceRangePicker(theme, priceRanges),
                 ),
                 const SizedBox(width: 8),
-                if (_searchQuery.isNotEmpty ||
-                    _selectedCategory != 'Всі' ||
+                if (_selectedCategory != 'Всі' ||
                     _selectedCondition != 'Всі' ||
                     _priceRange != 'Всі')
                   _buildFilterChip(theme, 'Очистити', () {
                     setState(() {
-                      _searchController.clear();
+                      // Only clear filters, not search text
                       _selectedCategory = 'Всі';
                       _selectedCondition = 'Всі';
                       _priceRange = 'Всі';
