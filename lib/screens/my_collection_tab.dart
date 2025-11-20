@@ -376,6 +376,10 @@ class _MyCollectionTabState extends State<MyCollectionTab> {
               context,
               MaterialPageRoute(builder: (_) => ItemDetailScreen(item: item)),
             ),
+            onOwnerTap: () {
+              // Navigate to own profile tab
+              Navigator.pushReplacementNamed(context, '/profile');
+            },
           ),
           Positioned(
             top: 8,

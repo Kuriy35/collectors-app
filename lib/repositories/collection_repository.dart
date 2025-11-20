@@ -49,7 +49,6 @@ class CollectionRepository {
   }
 
   Stream<List<CollectionItem>> getPublicItems() {
-    // Index required: https://console.firebase.google.com/v1/r/project/collectors-app-911b4/firestore/indexes?create_composite=collection_items;isPublic:ASCENDING;createdAt:DESCENDING
     return _itemsCollection
         .where('isPublic', isEqualTo: true)
         .orderBy('createdAt', descending: true)
@@ -141,7 +140,6 @@ class CollectionRepository {
       throw Exception('Немає прав для редагування цього предмету');
     }
 
-    // Delete removed images from Storage
     if (removedImageUrls != null && removedImageUrls.isNotEmpty) {
       for (final url in removedImageUrls) {
         try {
@@ -286,7 +284,6 @@ class CollectionRepository {
 
     await _userDoc(user.uid).set(profileData, SetOptions(merge: true));
 
-    // Update FirebaseAuth displayName and photoURL
     if (user.displayName != updatedUser.displayName ||
         user.photoURL != photoUrl) {
       await user.updateProfile(
@@ -318,7 +315,6 @@ class CollectionRepository {
       throw Exception('Користувач не знайдено');
     }
 
-    // Calculate totalItems and totalValue from public items
     final itemsSnapshot = await _itemsCollection
         .where('ownerId', isEqualTo: userId)
         .where('isPublic', isEqualTo: true)
