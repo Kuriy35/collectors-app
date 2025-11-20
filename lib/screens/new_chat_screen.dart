@@ -131,6 +131,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
                                   bio: user.collectionType ??
                                       user.bio ??
                                       'Колекціонер',
+                                  photoUrl: user.photoUrl,
                                   onTap: () {
                                     Navigator.push(
                                       context,

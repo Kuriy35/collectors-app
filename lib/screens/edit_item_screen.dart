@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import '../constants.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -192,7 +194,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
                   CustomDropdown(
                     label: 'Категорія',
                     value: _category,
-                    items: ['Монети', 'Марки', 'Фігурки'],
+                    items: kCollectionTypes,
                     onChanged: (v) => setState(() => _category = v!),
                   ),
                   const SizedBox(height: 20),

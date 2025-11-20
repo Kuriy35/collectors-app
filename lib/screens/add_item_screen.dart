@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import '../constants.dart';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -146,7 +148,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   CustomDropdown(
                     label: 'Категорія',
                     value: _category,
-                    items: ['Монети', 'Марки', 'Фігурки'],
+                    items: kCollectionTypes,
                     onChanged: (v) => setState(() => _category = v!),
                   ),
                   const SizedBox(height: 20),

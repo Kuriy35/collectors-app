@@ -185,9 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            profile?.collectionType?.isNotEmpty == true
-                ? profile!.collectionType!
-                : 'Любитель колекцій',
+            'Любитель колекцій',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -201,9 +199,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               'Тип колекції: ${profile!.collectionType}',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
                 fontFamily: 'Roboto',
               ),
               textAlign: TextAlign.center,
@@ -351,6 +349,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildAboutCard(ThemeData theme, bool isDark, UserProfile? profile) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.cardColor,
@@ -386,37 +385,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: isDark ? Colors.white70 : const Color(0xFF666666),
               fontSize: 16,
               fontFamily: 'Roboto',
-              height: 1.6,
+              height: 1.5,
             ),
           ),
-          if (profile?.collectionType?.isNotEmpty == true) ...[
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: theme.primaryColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: theme.primaryColor.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.collections, size: 16, color: theme.primaryColor),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Тип колекції: ${profile!.collectionType}',
-                    style: TextStyle(
-                      color: theme.primaryColor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Roboto',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ],
       ),
     );

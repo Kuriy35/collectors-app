@@ -55,10 +55,11 @@ class CollectionItemCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Row(
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
                       children: [
                         CustomBadge(text: item.category),
-                        const SizedBox(width: 8),
                         CustomBadge(text: item.condition),
                       ],
                     ),

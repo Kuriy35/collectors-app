@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import '../constants.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -123,11 +125,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     value: _collectionType ?? 'Виберіть тип',
                     items: [
                       'Виберіть тип',
-                      'Монети',
-                      'Марки',
-                      'Фігурки',
-                      'Книги',
-                      'Інше',
+                      ...kCollectionTypes,
                     ],
                     onChanged: (v) {
                       setState(() {

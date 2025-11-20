@@ -201,9 +201,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            _profile!.collectionType?.isNotEmpty == true
-                ? _profile!.collectionType!
-                : 'Любитель колекцій',
+            'Любитель колекцій',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -212,6 +210,19 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
             ),
             textAlign: TextAlign.center,
           ),
+          if (_profile!.collectionType?.isNotEmpty == true) ...[
+            const SizedBox(height: 4),
+            Text(
+              'Тип колекції: ${_profile!.collectionType}',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Roboto',
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ],
       ),
     );
@@ -330,6 +341,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
 
   Widget _buildAboutCard(ThemeData theme, bool isDark) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.cardColor,
@@ -363,7 +375,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
               color: isDark ? Colors.white70 : const Color(0xFF666666),
               fontSize: 16,
               fontFamily: 'Roboto',
-              height: 1.6,
+              height: 1.5,
             ),
           ),
         ],

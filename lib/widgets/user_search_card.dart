@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'chat_user_avatar.dart';
 
@@ -6,7 +7,9 @@ class UserSearchCard extends StatelessWidget {
   final List<Color> gradient;
   final String name;
   final String bio;
+  final String? photoUrl;
   final VoidCallback onTap;
+  final VoidCallback onMessageTap;
 
   const UserSearchCard({
     super.key,
@@ -14,11 +17,12 @@ class UserSearchCard extends StatelessWidget {
     required this.gradient,
     required this.name,
     required this.bio,
+    this.photoUrl,
     required this.onTap,
     required this.onMessageTap,
   });
 
-  final VoidCallback onMessageTap;
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +42,36 @@ class UserSearchCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              ChatUserAvatar(initials: initials, gradient: gradient),
+              if (photoUrl != null && photoUrl!.isNotEmpty)
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: photoUrl!,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => ChatUserAvatar(
+                        initials: initials,
+                        gradient: gradient,
+                        size: 48,
+                      ),
+                      errorWidget: (context, url, error) => ChatUserAvatar(
+                        initials: initials,
+                        gradient: gradient,
+                        size: 48,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                ChatUserAvatar(
+                  initials: initials,
+                  gradient: gradient,
+                  size: 48,
+                ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(

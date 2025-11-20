@@ -5,12 +5,14 @@ class ChatUserAvatar extends StatelessWidget {
   final String initials;
   final List<Color> gradient;
   final bool isOnline;
+  final double size;
 
   const ChatUserAvatar({
     super.key,
     required this.initials,
     required this.gradient,
     this.isOnline = false,
+    this.size = 56,
   });
 
   @override
@@ -18,8 +20,8 @@ class ChatUserAvatar extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          width: 56,
-          height: 56,
+          width: size,
+          height: size,
           decoration: BoxDecoration(
             gradient: LinearGradient(colors: gradient),
             borderRadius: BorderRadius.circular(28),
