@@ -340,36 +340,25 @@ class CollectionRepository {
       return [];
     }
 
-    final searchTerm = query.trim();
-    final endTerm = '$searchTerm\uf8ff';
+    final searchTerm = query.trim().toLowerCase();
 
-    // Query by displayName
-    final nameQuery = _firestore
-        .collection('users')
-        .where('displayName', isGreaterThanOrEqualTo: searchTerm)
-        .where('displayName', isLessThanOrEqualTo: endTerm)
-        .get();
+    // Fetch all users (limit to 100 for safety in this demo context)
+    // In a real app with many users, we would need a dedicated search service (Algolia/Elastic)
+    // or a "searchKey" field in Firestore.
+    final snapshot = await _firestore.collection('users').limit(100).get();
 
-    // Query by collectionType
-    final typeQuery = _firestore
-        .collection('users')
-        .where('collectionType', isGreaterThanOrEqualTo: searchTerm)
-        .where('collectionType', isLessThanOrEqualTo: endTerm)
-        .get();
+    final results = snapshot.docs
+        .map((doc) => UserProfile.fromFirestore(doc))
+        .where((profile) {
+          if (profile.uid == user.uid) return false;
+          
+          final name = profile.displayName.toLowerCase();
+          final type = profile.collectionType?.toLowerCase() ?? '';
+          
+          return name.contains(searchTerm) || type.contains(searchTerm);
+        })
+        .toList();
 
-    final results = await Future.wait([nameQuery, typeQuery]);
-    final nameDocs = results[0].docs;
-    final typeDocs = results[1].docs;
-
-    final Map<String, UserProfile> uniqueUsers = {};
-
-    for (final doc in [...nameDocs, ...typeDocs]) {
-      if (doc.id == user.uid) continue; // Exclude current user
-      if (!uniqueUsers.containsKey(doc.id)) {
-        uniqueUsers[doc.id] = UserProfile.fromFirestore(doc);
-      }
-    }
-
-    return uniqueUsers.values.toList();
+    return results;
   }
 }

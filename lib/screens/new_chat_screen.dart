@@ -8,6 +8,7 @@ import '../widgets/custom_bottom_nav.dart';
 import '../widgets/custom_search_bar.dart';
 import '../widgets/user_search_card.dart';
 import 'chat_detail_screen.dart';
+import 'other_user_profile_screen.dart';
 
 class NewChatScreen extends StatefulWidget {
   const NewChatScreen({super.key});
@@ -131,6 +132,16 @@ class _NewChatScreenState extends State<NewChatScreen> {
                                       user.bio ??
                                       'Колекціонер',
                                   onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => OtherUserProfileScreen(
+                                          userId: user.uid,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  onMessageTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
