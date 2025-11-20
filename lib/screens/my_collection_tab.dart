@@ -5,6 +5,9 @@ import '../providers/collection_provider.dart';
 import '../widgets/collection_item.dart';
 import '../widgets/custom_search_bar.dart';
 import '../widgets/custom_toast.dart';
+import '../widgets/empty_state_widget.dart';
+import '../widgets/error_state_widget.dart';
+import '../widgets/filter_chip_widget.dart';
 import 'edit_item_screen.dart';
 import 'item_detail_screen.dart';
 
@@ -101,13 +104,12 @@ class _MyCollectionTabState extends State<MyCollectionTab> {
             child: provider.isLoading && provider.myItems.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : provider.error != null && provider.myItems.isEmpty
-                ? _buildErrorState(
-                    context,
-                    provider,
+                ? ErrorStateWidget(
+                    error: provider.error!,
                     onRetry: provider.loadMyItems,
                   )
                 : filteredItems.isEmpty
-                ? _buildEmptyState(theme, 'Нічого не знайдено')
+                ? const EmptyStateWidget(message: 'Нічого не знайдено')
                 : ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.all(16),
@@ -168,35 +170,36 @@ class _MyCollectionTabState extends State<MyCollectionTab> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildFilterChip(
-                  theme,
-                  'Категорія: $_selectedCategory',
-                  () => _showCategoryPicker(theme, categories),
+                FilterChipWidget(
+                  label: 'Категорія: $_selectedCategory',
+                  onTap: () => _showCategoryPicker(theme, categories),
                 ),
                 const SizedBox(width: 8),
-                _buildFilterChip(
-                  theme,
-                  'Стан: $_selectedCondition',
-                  () => _showConditionPicker(theme, conditions),
+                FilterChipWidget(
+                  label: 'Стан: $_selectedCondition',
+                  onTap: () => _showConditionPicker(theme, conditions),
                 ),
                 const SizedBox(width: 8),
-                _buildFilterChip(
-                  theme,
-                  'Ціна: $_priceRange',
-                  () => _showPriceRangePicker(theme, priceRanges),
+                FilterChipWidget(
+                  label: 'Ціна: $_priceRange',
+                  onTap: () => _showPriceRangePicker(theme, priceRanges),
                 ),
                 const SizedBox(width: 8),
                 if (_selectedCategory != 'Всі' ||
                     _selectedCondition != 'Всі' ||
                     _priceRange != 'Всі')
-                  _buildFilterChip(theme, 'Очистити', () {
-                    setState(() {
-                      // Only clear filters, not search text
-                      _selectedCategory = 'Всі';
-                      _selectedCondition = 'Всі';
-                      _priceRange = 'Всі';
-                    });
-                  }, isClear: true),
+                  FilterChipWidget(
+                    label: 'Очистити',
+                    onTap: () {
+                      setState(() {
+                        // Only clear filters, not search text
+                        _selectedCategory = 'Всі';
+                        _selectedCondition = 'Всі';
+                        _priceRange = 'Всі';
+                      });
+                    },
+                    isClear: true,
+                  ),
               ],
             ),
           ),
@@ -205,34 +208,7 @@ class _MyCollectionTabState extends State<MyCollectionTab> {
     );
   }
 
-  Widget _buildFilterChip(
-    ThemeData theme,
-    String label,
-    VoidCallback onTap, {
-    bool isClear = false,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isClear ? theme.primaryColor : theme.cardColor,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isClear ? theme.primaryColor : theme.dividerColor,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isClear ? Colors.white : theme.textTheme.bodyMedium?.color,
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
+
 
   void _showCategoryPicker(ThemeData theme, List<String> categories) {
     showModalBottomSheet(
@@ -459,54 +435,5 @@ class _MyCollectionTabState extends State<MyCollectionTab> {
     );
   }
 
-  Widget _buildErrorState(
-    BuildContext context,
-    CollectionProvider provider, {
-    required VoidCallback onRetry,
-  }) {
-    return ListView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      children: [
-        SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error_outline, size: 48, color: Colors.red.shade400),
-              const SizedBox(height: 12),
-              Text(
-                provider.error ?? 'Помилка завантаження',
-                style: TextStyle(color: Colors.red.shade400),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: onRetry,
-                child: const Text('Спробувати ще'),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget _buildEmptyState(ThemeData theme, String message) {
-    return ListView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      children: [
-        SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(40),
-            child: Text(
-              message,
-              style: TextStyle(color: theme.textTheme.bodyMedium?.color),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }

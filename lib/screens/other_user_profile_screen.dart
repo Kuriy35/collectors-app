@@ -7,6 +7,7 @@ import '../providers/collection_provider.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_bottom_nav.dart';
 import '../widgets/collection_item.dart';
+import '../widgets/profile_header.dart';
 import 'item_detail_screen.dart';
 
 class OtherUserProfileScreen extends StatefulWidget {
@@ -163,66 +164,13 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 100,
-            height: 100,
-            decoration: ShapeDecoration(
-              color: Colors.white.withAlpha((0.25 * 255).toInt()),
-              shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  width: 4,
-                  color: Colors.white.withAlpha((0.3 * 255).toInt()),
-                ),
-                borderRadius: BorderRadius.circular(48),
-              ),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(44),
-              child: _profile!.photoUrl != null && _profile!.photoUrl!.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: _profile!.photoUrl!,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => _headerInitials(),
-                      errorWidget: (_, __, ___) => _headerInitials(),
-                    )
-                  : _headerInitials(),
-            ),
+          ProfileHeader(
+            photoUrl: _profile!.photoUrl,
+            displayName: _profile!.displayName,
+            collectionType: _profile!.collectionType,
+            initialsWidget: _headerInitials(),
           ),
-          const SizedBox(height: 16),
-          Text(
-            _profile!.displayName,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              fontFamily: 'Roboto',
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Любитель колекцій',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Roboto',
-            ),
-            textAlign: TextAlign.center,
-          ),
-          if (_profile!.collectionType?.isNotEmpty == true) ...[
-            const SizedBox(height: 4),
-            Text(
-              'Тип колекції: ${_profile!.collectionType}',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Roboto',
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+
         ],
       ),
     );

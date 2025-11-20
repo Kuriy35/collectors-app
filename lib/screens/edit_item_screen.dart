@@ -14,6 +14,7 @@ import '../widgets/custom_bottom_nav.dart';
 import '../widgets/custom_dropdown.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/custom_toast.dart';
+import '../widgets/custom_image_picker.dart';
 
 class EditItemScreen extends StatefulWidget {
   final CollectionItem item;
@@ -296,111 +297,18 @@ class _EditItemScreenState extends State<EditItemScreen> {
   }
 
   Widget _buildImagePicker(ThemeData theme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Фотографії', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: [
-            // Existing images from URLs
-            ..._existingImages.map(
-              (img) => Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 96,
-                    height: 96,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: theme.dividerColor),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: CachedNetworkImage(
-                        imageUrl: img.url,
-                        fit: BoxFit.cover,
-                        placeholder: (_, __) => const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                        errorWidget: (_, __, ___) =>
-                            const Icon(Icons.broken_image),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: -6,
-                    right: -6,
-                    child: GestureDetector(
-                      onTap: () => _removeExistingImage(img),
-                      child: CircleAvatar(
-                        radius: 12,
-                        backgroundColor: Colors.black.withValues(alpha: 0.6),
-                        child: const Icon(
-                          Icons.close,
-                          size: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // New images from files
-            ..._newImages.map(
-              (img) => Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 96,
-                    height: 96,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      image: DecorationImage(
-                        image: MemoryImage(img.bytes),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: -6,
-                    right: -6,
-                    child: GestureDetector(
-                      onTap: () => _removeNewImage(img),
-                      child: CircleAvatar(
-                        radius: 12,
-                        backgroundColor: Colors.black.withValues(alpha: 0.6),
-                        child: const Icon(
-                          Icons.close,
-                          size: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Add button
-            GestureDetector(
-              onTap: _pickImages,
-              child: Container(
-                width: 96,
-                height: 96,
-                decoration: BoxDecoration(
-                  color: theme.cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: theme.dividerColor),
-                ),
-                child: const Icon(Icons.add_a_photo_outlined),
-              ),
-            ),
-          ],
-        ),
-      ],
+    return CustomImagePicker(
+      existingImageUrls: _existingImages.map((i) => i.url).toList(),
+      newImageBytes: _newImages.map((i) => i.bytes).toList(),
+      onPickImages: _pickImages,
+      onRemoveExistingImage: (url) {
+        final img = _existingImages.firstWhere((i) => i.url == url);
+        _removeExistingImage(img);
+      },
+      onRemoveNewImage: (index) {
+        final img = _newImages[index];
+        _removeNewImage(img);
+      },
     );
   }
 

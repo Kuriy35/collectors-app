@@ -12,6 +12,7 @@ import '../widgets/custom_bottom_nav.dart';
 import '../widgets/custom_dropdown.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/custom_toast.dart';
+import '../widgets/custom_image_picker.dart';
 
 class AddItemScreen extends StatefulWidget {
   const AddItemScreen({super.key});
@@ -250,69 +251,14 @@ class _AddItemScreenState extends State<AddItemScreen> {
   }
 
   Widget _buildImagePicker(ThemeData theme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Фотографії', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: [
-            GestureDetector(
-              onTap: _pickImages,
-              child: Container(
-                width: 96,
-                height: 96,
-                decoration: BoxDecoration(
-                  color: theme.cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: theme.dividerColor),
-                ),
-                child: const Icon(Icons.add_a_photo_outlined),
-              ),
-            ),
-            ..._images.map(
-              (img) => Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 96,
-                    height: 96,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      image: DecorationImage(
-                        image: MemoryImage(img.bytes),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: -6,
-                    right: -6,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _images = List.from(_images)..remove(img);
-                        });
-                      },
-                      child: CircleAvatar(
-                        radius: 12,
-                        backgroundColor: Colors.black.withValues(alpha: 0.6),
-                        child: const Icon(
-                          Icons.close,
-                          size: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
+    return CustomImagePicker(
+      newImageBytes: _images.map((i) => i.bytes).toList(),
+      onPickImages: _pickImages,
+      onRemoveNewImage: (index) {
+        setState(() {
+          _images = List.from(_images)..removeAt(index);
+        });
+      },
     );
   }
 

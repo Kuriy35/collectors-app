@@ -10,6 +10,7 @@ import '../providers/collection_provider.dart';
 import '../providers/theme_provider.dart';
 import '../widgets/custom_bottom_nav.dart';
 import '../widgets/custom_toast.dart';
+import '../widgets/profile_header.dart';
 import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -148,65 +149,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 100,
-            height: 100,
-            decoration: ShapeDecoration(
-              color: Colors.white.withAlpha((0.25 * 255).toInt()),
-              shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  width: 4,
-                  color: Colors.white.withAlpha((0.3 * 255).toInt()),
-                ),
-                borderRadius: BorderRadius.circular(48),
-              ),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(44),
-              child: profile?.photoUrl != null && profile!.photoUrl!.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: profile.photoUrl!,
-                      fit: BoxFit.cover,
-                      errorWidget: (_, __, ___) => _headerInitials(),
-                    )
-                  : _headerInitials(),
-            ),
+          ProfileHeader(
+            photoUrl: profile?.photoUrl,
+            displayName: profile?.displayName ?? user?.displayName ?? 'Користувач',
+            collectionType: profile?.collectionType,
+            initialsWidget: _headerInitials(),
           ),
-          const SizedBox(height: 16),
-          Text(
-            profile?.displayName ?? user?.displayName ?? 'Користувач',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              fontFamily: 'Roboto',
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Любитель колекцій',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Roboto',
-            ),
-            textAlign: TextAlign.center,
-          ),
-          if (profile?.collectionType?.isNotEmpty == true) ...[
-            const SizedBox(height: 4),
-            Text(
-              'Тип колекції: ${profile!.collectionType}',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Roboto',
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
         ],
       ),
     );
@@ -276,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 isLoading ? '...' : publicCount.toString(),
                 'Публічних',
                 theme.highlightColor,
-                Icons.chat,
+                Icons.public,
                 isDark,
               ),
               _buildStatItem(
@@ -293,6 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // Modified _buildStatItem to accept a Widget for the icon parameter
   Widget _buildStatItem(
     String value,
     String label,

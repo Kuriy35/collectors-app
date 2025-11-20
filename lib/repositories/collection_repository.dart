@@ -342,9 +342,6 @@ class CollectionRepository {
 
     final searchTerm = query.trim().toLowerCase();
 
-    // Fetch all users (limit to 100 for safety in this demo context)
-    // In a real app with many users, we would need a dedicated search service (Algolia/Elastic)
-    // or a "searchKey" field in Firestore.
     final snapshot = await _firestore.collection('users').limit(100).get();
 
     final results = snapshot.docs
