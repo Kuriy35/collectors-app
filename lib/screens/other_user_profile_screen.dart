@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -83,10 +82,10 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
               child: _isLoadingProfile
                   ? const Center(child: CircularProgressIndicator())
                   : _error != null
-                      ? _buildErrorState(theme)
-                      : _profile == null
-                          ? _buildEmptyState(theme)
-                          : _buildProfileContent(context, theme, isDark),
+                  ? _buildErrorState(theme)
+                  : _profile == null
+                  ? _buildEmptyState(theme)
+                  : _buildProfileContent(context, theme, isDark),
             ),
           ],
         ),
@@ -170,7 +169,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
             collectionType: _profile!.collectionType,
             initialsWidget: _headerInitials(),
           ),
-
         ],
       ),
     );
@@ -444,4 +442,3 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
     );
   }
 }
-

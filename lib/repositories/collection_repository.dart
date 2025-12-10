@@ -348,10 +348,10 @@ class CollectionRepository {
         .map((doc) => UserProfile.fromFirestore(doc))
         .where((profile) {
           if (profile.uid == user.uid) return false;
-          
+
           final name = profile.displayName.toLowerCase();
           final type = profile.collectionType?.toLowerCase() ?? '';
-          
+
           return name.contains(searchTerm) || type.contains(searchTerm);
         })
         .toList();

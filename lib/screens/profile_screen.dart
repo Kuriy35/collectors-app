@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -93,7 +92,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: _buildAboutCard(
-                        theme, isDark, collectionProvider.userProfile),
+                      theme,
+                      isDark,
+                      collectionProvider.userProfile,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Padding(
@@ -151,7 +153,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           ProfileHeader(
             photoUrl: profile?.photoUrl,
-            displayName: profile?.displayName ?? user?.displayName ?? 'Користувач',
+            displayName:
+                profile?.displayName ?? user?.displayName ?? 'Користувач',
             collectionType: profile?.collectionType,
             initialsWidget: _headerInitials(),
           ),

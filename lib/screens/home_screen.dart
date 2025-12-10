@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_bottom_nav.dart';
-import '../providers/collection_provider.dart';
 import 'my_collection_tab.dart';
 import 'other_collections_tab.dart';
 

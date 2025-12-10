@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -37,7 +36,8 @@ class CollectionProvider extends ChangeNotifier {
   List<CollectionItem> get publicItems => List.unmodifiable(_publicItems);
   List<CollectionItem> get discoverItems => List.unmodifiable(_discoverItems);
   UserProfile? get userProfile => _userProfile;
-  bool get isLoading => _isLoadingMy || _isLoadingPublic || _isLoadingDiscover || _isMutating;
+  bool get isLoading =>
+      _isLoadingMy || _isLoadingPublic || _isLoadingDiscover || _isMutating;
   String? get error => _error;
   double get myItemsTotalValue =>
       _myItems.fold<double>(0, (sum, item) => sum + item.price);
@@ -54,7 +54,6 @@ class CollectionProvider extends ChangeNotifier {
         loadMyItems(userId: user.uid);
         loadPublicItems();
         _subscribeToProfile();
-        // loadDiscoverItems(); // If needed
       }
     });
   }
@@ -101,22 +100,24 @@ class CollectionProvider extends ChangeNotifier {
     _isLoadingMy = true;
     notifyListeners();
 
-    _myItemsSub = _repository.getMyItems(userId: uid).listen(
-      (items) {
-        _myItems = items;
-        _isLoadingMy = false;
-        _error = null;
-        if (!completer.isCompleted) completer.complete();
-        notifyListeners();
-      },
-      onError: (error) {
-        _isLoadingMy = false;
-        _error = 'Не вдалося завантажити ваші предмети';
-        debugPrint('CollectionProvider.loadMyItems error: $error');
-        if (!completer.isCompleted) completer.completeError(error);
-        notifyListeners();
-      },
-    );
+    _myItemsSub = _repository
+        .getMyItems(userId: uid)
+        .listen(
+          (items) {
+            _myItems = items;
+            _isLoadingMy = false;
+            _error = null;
+            if (!completer.isCompleted) completer.complete();
+            notifyListeners();
+          },
+          onError: (error) {
+            _isLoadingMy = false;
+            _error = 'Не вдалося завантажити ваші предмети';
+            debugPrint('CollectionProvider.loadMyItems error: $error');
+            if (!completer.isCompleted) completer.completeError(error);
+            notifyListeners();
+          },
+        );
 
     return completer.future;
   }
@@ -276,8 +277,11 @@ class CollectionProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteItem(BuildContext context, String itemId, List<String> imageUrls) async {
-    // Background delete - no loading state to avoid blocking UI
+  Future<void> deleteItem(
+    BuildContext context,
+    String itemId,
+    List<String> imageUrls,
+  ) async {
     try {
       await _repository.deleteItem(itemId, imageUrls);
       if (context.mounted) {
@@ -288,7 +292,6 @@ class CollectionProvider extends ChangeNotifier {
       if (context.mounted) {
         CustomToast.showError(context, 'Не вдалося видалити предмет: $e');
       }
-      // Optionally reload items if delete failed to restore state
       loadMyItems();
     }
   }

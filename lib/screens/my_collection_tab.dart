@@ -4,7 +4,6 @@ import '../models/collection_item.dart';
 import '../providers/collection_provider.dart';
 import '../widgets/collection_item.dart';
 import '../widgets/custom_search_bar.dart';
-import '../widgets/custom_toast.dart';
 import '../widgets/empty_state_widget.dart';
 import '../widgets/error_state_widget.dart';
 import '../widgets/filter_chip_widget.dart';
@@ -207,8 +206,6 @@ class _MyCollectionTabState extends State<MyCollectionTab> {
       ),
     );
   }
-
-
 
   void _showCategoryPicker(ThemeData theme, List<String> categories) {
     showModalBottomSheet(
@@ -422,7 +419,11 @@ class _MyCollectionTabState extends State<MyCollectionTab> {
               try {
                 Navigator.pop(context); // Close dialog first
                 provider.deleteItemLocally(item); // Remove locally
-                await provider.deleteItem(context, item.id, item.imageUrls); // Background delete with toast
+                await provider.deleteItem(
+                  context,
+                  item.id,
+                  item.imageUrls,
+                ); // Background delete with toast
               } catch (e) {
                 // Error handled in provider
               }
@@ -434,6 +435,4 @@ class _MyCollectionTabState extends State<MyCollectionTab> {
       ),
     );
   }
-
-
 }
