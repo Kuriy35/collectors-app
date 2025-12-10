@@ -41,7 +41,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBmFWp0t1OoRKP05cGdH-pYk3Uv_t-EN9I',
+    apiKey: String.fromEnvironment(
+      'FIREBASE_WEB_KEY',
+      defaultValue: 'KEY_NOT_FOUND',
+    ),
     appId: '1:445062815461:web:43a87e113170e271fc7e0c',
     messagingSenderId: '445062815461',
     projectId: 'collectors-app-911b4',
@@ -51,7 +54,10 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDlTIiTo7m-ibN3u-1ib14pXN8JUF6xd3Y',
+    apiKey: String.fromEnvironment(
+      'FIREBASE_ANDROID_KEY',
+      defaultValue: 'KEY_NOT_FOUND',
+    ),
     appId: '1:445062815461:android:10714ad83d6309f0fc7e0c',
     messagingSenderId: '445062815461',
     projectId: 'collectors-app-911b4',
@@ -59,7 +65,10 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD2XsQc8jM72ndScGzWcMtpoGTAwYPAIL8',
+    apiKey: String.fromEnvironment(
+      'FIREBASE_IOS_KEY',
+      defaultValue: 'KEY_NOT_FOUND',
+    ),
     appId: '1:445062815461:ios:9f6a5955dcf0abbdfc7e0c',
     messagingSenderId: '445062815461',
     projectId: 'collectors-app-911b4',
@@ -68,7 +77,10 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyD2XsQc8jM72ndScGzWcMtpoGTAwYPAIL8',
+    apiKey: String.fromEnvironment(
+      'FIREBASE_MACOS_KEY',
+      defaultValue: 'KEY_NOT_FOUND',
+    ),
     appId: '1:445062815461:ios:9f6a5955dcf0abbdfc7e0c',
     messagingSenderId: '445062815461',
     projectId: 'collectors-app-911b4',
@@ -77,7 +89,10 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBmFWp0t1OoRKP05cGdH-pYk3Uv_t-EN9I',
+    apiKey: String.fromEnvironment(
+      'FIREBASE_WINDOWS_KEY',
+      defaultValue: 'KEY_NOT_FOUND',
+    ),
     appId: '1:445062815461:web:75858e4066a83e46fc7e0c',
     messagingSenderId: '445062815461',
     projectId: 'collectors-app-911b4',
